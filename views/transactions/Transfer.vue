@@ -127,17 +127,7 @@
             funds which requires paying another transaction fee on {{ eraNetwork.l1Network?.name }}.
           </p>
         </CommonAlert>
-        <CommonButton
-          as="a"
-          href="https://zksync.dappradar.com/ecosystem?category=defi_bridge"
-          target="_blank"
-          type="submit"
-          variant="primary"
-          class="mt-block-gap w-full gap-1"
-        >
-          See third-party bridges
-          <ArrowTopRightOnSquareIcon class="h-6 w-6" aria-hidden="true" />
-        </CommonButton>
+        
         <CommonButton size="sm" class="mx-auto mt-block-gap w-max" @click="buttonContinue()">
           I understand, proceed to withdrawal
         </CommonButton>
@@ -279,7 +269,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ArrowTopRightOnSquareIcon, ExclamationTriangleIcon, InformationCircleIcon } from "@heroicons/vue/24/outline";
+import {  ExclamationTriangleIcon, InformationCircleIcon } from "@heroicons/vue/24/outline";
 import { useRouteQuery } from "@vueuse/router";
 import { isAddress } from "ethers";
 

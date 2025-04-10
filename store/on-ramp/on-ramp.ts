@@ -9,7 +9,7 @@ import { wagmiConfig } from "@/data/wagmi";
 import { useQuotesStore } from "@/store/on-ramp/quotes";
 
 createOnRampConfig({
-  integrator: "ZKsync Portal",
+  integrator: "Magma Bridge",
   services: ["kado"],
   provider: EVM({
     // eslint-disable-next-line require-await

@@ -19,7 +19,7 @@ export class LoginPage extends BasePage {
   }
 
   get mainTitle() {
-    return "//h1[text()='ZKsync Portal']";
+    return "//h1[text()='Magma Bridge Portal']";
   }
 
   async connectMetamask() {

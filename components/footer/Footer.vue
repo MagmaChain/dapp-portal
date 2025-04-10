@@ -12,12 +12,14 @@
           {{ portalRuntimeConfig.gitCommitHash }}
         </span>
       </CommonButtonLabel>
+      <!--
       <CommonButtonLabel as="a" href="https://zksync.io/terms" target="_blank" class="footer-link">
         Terms of Service
       </CommonButtonLabel>
       <CommonButtonLabel as="a" href="https://zksync.io/privacy" target="_blank" class="footer-link">
         Privacy Policy
       </CommonButtonLabel>
+      -->
     </div>
   </footer>
 </template>

@@ -1,1 +1,34 @@
-[]
+[
+  {
+    "network": {
+      "id": 271,
+      "name": "Magma Testnet",
+      "key": "magma-testnet",
+      "rpcUrl": "https://carbon.magma-rpc.com/",
+      "blockExplorerUrl": "https://explore.magma-rpc.com",
+      "blockExplorerApi": "https://visualiser.magma-rpc.com",
+      "publicL1NetworkId": 11155111,
+      "iconUrl": "/img/lava.svg",
+
+      "l1Network": {
+        "id": 9,
+        "name": "sepolia",
+        "network": "sepolia",
+        "nativeCurrency": { "name": "Ether", "symbol": "ETH", "decimals": 18 },
+        "rpcUrls": {
+          "default": { "http": ["https://eth-sepolia.g.alchemy.com/v2/_c3XP9z1lgtViWEIyKPHo20pehakfvdW"] },
+          "public": { "http": ["https://eth-sepolia.g.alchemy.com/v2/_c3XP9z1lgtViWEIyKPHo20pehakfvdW"] }
+        }
+      }
+    },
+    "tokens": [
+      {
+        "address": "0x000000000000000000000000000000000000800A",
+        "l1Address": "0xa3453A27d16c693C01C61D9aE16a8EA87A68dc55",
+        "symbol": "LAVA",
+        "decimals": 18,
+        "iconUrl": "/img/lava.svg"
+      }
+    ]
+  }
+]

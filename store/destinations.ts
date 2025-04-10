@@ -12,7 +12,7 @@ export const useDestinationsStore = defineStore("destinations", () => {
     era: {
       key: "era",
       label: eraNetwork.value.name,
-      iconUrl: "/img/era.svg",
+      iconUrl: "/img/lava.svg",
     },
     ethereum: {
       key: "ethereum",
@@ -48,6 +48,11 @@ export const useDestinationsStore = defineStore("destinations", () => {
       key: "rhino",
       label: "rhino.fi",
       iconUrl: "/img/rhino.svg",
+    },
+    magma: {
+      key: "magma-testnet",
+      label: "Magma Testnet",
+      iconUrl: "/img/lava.svg",
     },
   }));
 

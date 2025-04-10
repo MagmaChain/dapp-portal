@@ -1,10 +1,13 @@
 import { useMemoize } from "@vueuse/core";
 import { Wallet } from "zksync-ethers";
-import IL1SharedBridge from "zksync-ethers/abi/IL1SharedBridge.json";
+import IL1AssetRouter from "zksync-ethers/abi/IL1AssetRouter.json";
+// import IL1SharedBridge from "zksync-ethers/abi/IL1SharedBridge.json";
+import IL1Nullifier from "zksync-ethers/abi/IL1Nullifier.json";
 
 import { useSentryLogger } from "../useSentryLogger";
 
 import type { Hash } from "@/types";
+import type { PublicClient } from "viem";
 
 export default (transactionInfo: ComputedRef<TransactionInfo>) => {
   const status = ref<"not-started" | "processing" | "waiting-for-signature" | "sending" | "done">("not-started");
@@ -55,27 +58,56 @@ export default (transactionInfo: ComputedRef<TransactionInfo>) => {
       "0x7726827caac94a7f9e1b160f7ea819f172f7b6f9d2a97f992c38edeab82d4110",
       provider
     );
-    const { l1BatchNumber, l2MessageIndex, l2TxNumberInBlock, message, proof } = await wallet.finalizeWithdrawalParams(
+    const { l1BatchNumber, l2MessageIndex, l2TxNumberInBlock, message, proof ,sender} = await wallet.finalizeWithdrawalParams(
       transactionInfo.value.transactionHash
     );
+    const chainId = await retrieveChainId();
+
+    const actualParams = {
+      chainId,
+      l2BatchNumber: l1BatchNumber,
+      l2MessageIndex,
+      l2Sender: sender,
+      l2TxNumberInBatch: l2TxNumberInBlock,
+      message,
+      merkleProof:proof,
+    };
+
     return {
-      chainId: await retrieveChainId(),
+      actualParams,
+      chainId,
       l1BatchNumber,
       l2MessageIndex,
       l2TxNumberInBlock,
       message,
       proof,
+      sender,
     };
   };
 
-  const getTransactionParams = async () => {
-    finalizeWithdrawalParams.value = await getFinalizationParams();
-    return {
+
+
+  const getNullifierAddress = async (publicClient: PublicClient):Promise<string>=> {
+   
+    const nullifierAddress = await publicClient.readContract({
+      abi: IL1AssetRouter,
+      functionName: "L1_NULLIFIER",
       address: (await retrieveBridgeAddresses()).sharedL1 as Hash,
-      abi: IL1SharedBridge,
+    });
+
+
+    return nullifierAddress as string;
+  };
+
+  const getTransactionParams = async (nullifierAddress:string) => {
+    const params = await getFinalizationParams();
+    finalizeWithdrawalParams.value = params;
+    return {
+      address:nullifierAddress as Hash,
+      abi: IL1Nullifier,
       account: onboardStore.account.address!,
-      functionName: "finalizeWithdrawal",
-      args: Object.values(finalizeWithdrawalParams.value!),
+      functionName: "finalizeDeposit",
+      args: [params.actualParams!],
     };
   };
 
@@ -88,7 +120,8 @@ export default (transactionInfo: ComputedRef<TransactionInfo>) => {
       tokensStore.requestTokens();
       const publicClient = onboardStore.getPublicClient();
 
-      const transactionParams = await getTransactionParams();
+     const nullifierAddress =  await getNullifierAddress(publicClient);
+      const transactionParams = await getTransactionParams(nullifierAddress);
       const [price, limit] = await Promise.all([
         retry(async () => BigInt((await publicClient.getGasPrice()).toString())),
         retry(async () => {
@@ -141,12 +174,7 @@ export default (transactionInfo: ComputedRef<TransactionInfo>) => {
         })
       );
 
-      trackEvent("withdrawal-finalized", {
-        token: transactionInfo.value!.token.symbol,
-        amount: transactionInfo.value!.token.amount,
-        to: transactionInfo.value!.to.address,
-      });
-
+     
       status.value = "done";
       return receipt;
     } catch (err) {
